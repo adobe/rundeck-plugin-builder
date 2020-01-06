@@ -1,5 +1,28 @@
 plugins {
     id 'java'
+    id 'maven'
+}
+
+project('test1') {
+    sourceSets {
+        main {
+            java {
+                srcDir '../src'
+                include 'test1/**'
+            }
+        }
+    }
+}
+
+project('test2') {
+    sourceSets {
+        main {
+            java {
+                srcDir '../src'
+                include 'test2/**'
+            }
+        }
+    }
 }
 
 group 'org.example'
@@ -13,4 +36,36 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        inceptionYear '2020'
+        name 'Rundeck Plugin Builder'
+        packaging 'jar'
+        description 'A software skeleton for developing new plugins and an automated process for attaching plugins to a Rundeck instance.'
+
+        url 'https://github.com/adobe/rundeck-plugin-builder.git'
+
+        scm {
+            connection 'git@github.com:adobe/rundeck-plugin-builder.git'
+            developerConnection 'git@github.com:adobe/rundeck-plugin-builder.git'
+            url 'https://github.com/adobe/rundeck-plugin-builder'
+        }
+
+        licenses {
+            license {
+                name 'The Apache License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+
+        developers {
+            developer {
+                id 'catalinafocsa'
+                name 'Catalina Focsa'
+                email 'focsa@adobe.com'
+            }
+        }
+    }
 }

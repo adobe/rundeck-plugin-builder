@@ -1,2 +1,3 @@
+include 'test1', 'test2'
 rootProject.name = 'rundeck-plugin-builder'
 
