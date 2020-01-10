@@ -3,13 +3,23 @@
 #### Rundeck - https://github.com/rundeck is a free open-source runbook automation software that brought operations to a whole new level, operations as a service. Rundeck is developed by Rundeck, Inc. and by the Rundeck community and new users are invited to contribute to the project. Extended custom functionality can be added through plugins, also available as free open-source software at https://github.com/rundeck-plugins and usually developed in top languages such as: Java, Groovy, Python, Shell, PowerShell.
 #### Nevertheless, building, adding or even writing or extending a new plugin, can be a tricky thing to do. To fully embrace this challenge, and to ease our work when customizing at scale, this project aims to provide a software skeleton for developing new plugins and an automated process for attaching the plugins to your Rundeck instance.
 
+![Diagram](https://user-images.githubusercontent.com/10680345/72166553-1e234c80-33d2-11ea-81de-b3b9175d825f.jpg)
+
 ### Usage
+
+[TODO]
 
 ##### Configuration
 
+[TODO]
+
 ##### Starting with gradle
 
+[TODO]
+
 ### Build & Run
+
+[TODO]
 
 ### Make sure openjdk-8-jdk is installed in your building environment and that it includes java and javac.
 ### To double check, run the following:
@@ -28,8 +38,8 @@ javac -version
 javac 1.8.0_232
 ```
 ### Download the source code for the plugins you wish to include. Source code for plugins is available in multiple Rundeck locations such as
-https://docs.rundeck.com/plugins/
-https://github.com/rundeck-plugins/
+ - https://docs.rundeck.com/plugins/
+ - https://github.com/rundeck-plugins/
 
 ### Build the jars. After building, the jars should reside in build/libs/ as <my_plugin>.jar
 ```
@@ -38,7 +48,7 @@ https://github.com/rundeck-plugins/
 
 ### Contributing
 
-Ideas and contributions are fully welcomed and encouraged. The only constraints we should keep in mind is to add value with every new submission and to keep Rundeck's trajectory a step ahead of today.
+Ideas and contributions are fully welcomed and encouraged. The only recommendation we should keep in mind is to add value with every new submission and to keep Rundeck's trajectory a step ahead of today.
 For more information, read the [Contributing Guide](./.github/CONTRIBUTING.md).
 
 ### Licensing
