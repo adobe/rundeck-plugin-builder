@@ -1,0 +1,79 @@
+##########################################################################################
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+##########################################################################################
+# A generic list of already available plugins and their HTTPS URLs
+##########################################################################################
+https://github.com/rundeck-plugins/docker
+https://github.com/rundeck-plugins/openssh-node-execution
+https://github.com/rundeck-plugins/rundeck-azure-plugin
+https://github.com/rundeck-plugins/slack-incoming-webhook-plugin
+https://github.com/rundeck-plugins/git-resource-model
+https://github.com/rundeck-plugins/jq-json-logfilter
+https://github.com/rundeck-plugins/openssh-bastion-node-execution
+https://github.com/rundeck-plugins/py-winrm-plugin
+https://github.com/rundeck-plugins/kubernetes
+https://github.com/rundeck-plugins/http-step
+https://github.com/rundeck-plugins/salt-step
+https://github.com/rundeck-plugins/rundeck-s3-log-plugin
+https://github.com/rundeck-plugins/rundeck-winrm-plugin
+https://github.com/rundeck-plugins/nixy-step-plugins
+https://github.com/rundeck-plugins/save-to-file
+https://github.com/rundeck-plugins/http-tours
+https://github.com/rundeck-plugins/pagerduty-notification
+https://github.com/rundeck-plugins/rundeck-ec2-nodes-plugin
+https://github.com/rundeck-plugins/http-notification
+https://github.com/rundeck-plugins/aws-s3-model-source
+https://github.com/rundeck-plugins/set-job-globals
+https://github.com/rundeck-plugins/git-plugin
+https://github.com/rundeck-plugins/local-tours
+https://github.com/rundeck-plugins/ui-plugin-examples
+https://github.com/rundeck-plugins/sudo-local-execution
+https://github.com/rundeck-plugins/vault-storage
+https://github.com/rundeck-plugins/ui-job-list
+https://github.com/rundeck-plugins/ui-job-graph
+https://github.com/rundeck-plugins/jira-notification
+https://github.com/rundeck-plugins/ansible-resource-format
+https://github.com/rundeck-plugins/jira-workflow-step
+https://github.com/rundeck-plugins/attribute-match-node-enhancer
+https://github.com/rundeck-plugins/aws-s3-steps
+https://github.com/rundeck-plugins/job-state-plugin
+https://github.com/rundeck-plugins/flow-control-plugin
+https://github.com/rundeck-plugins/copyfile-plugin
+https://github.com/rundeck-plugins/upvar-plugin
+https://github.com/rundeck-plugins/object-store-plugin
+https://github.com/rundeck-plugins/nexus-step-plugins
+https://github.com/rundeck-plugins/jabber-notification
+https://github.com/rundeck-plugins/rundeck-puppetenterprise-nodes-plugin
+https://github.com/rundeck-plugins/rundeck-ansible-plugin
+https://github.com/rundeck-plugins/resource-format-json-option
+https://github.com/rundeck-plugins/mesos-steps
+https://github.com/rundeck-plugins/multiline-regex-datacapture-filter
+https://github.com/rundeck-plugins/data-utils
+https://github.com/rundeck-plugins/yaml-text-source
+https://github.com/rundeck-plugins/build-zip
+https://github.com/rundeck-plugins/powershell-networkdrive-steps
+https://github.com/rundeck-plugins/bolt-puppet-node-executor
+https://github.com/rundeck-plugins/java-keytool-steps
+https://github.com/rundeck-plugins/powershell-aws-cli-s3-steps
+https://github.com/rundeck-plugins/powershell-aws-sdk-s3-steps
+https://github.com/rundeck-plugins/powershell-sandbox-directory
+https://github.com/rundeck-plugins/rundeck-azure-storage-plugin
+https://github.com/rundeck-plugins/log4j-streaming-logwriter
+https://github.com/rundeck-plugins/aws-ec2-steps
+https://github.com/rundeck-plugins/puppet-apply-step
+https://github.com/rundeck-plugins/ansible
+https://github.com/rundeck-plugins/webdav-logstore
+https://github.com/rundeck-plugins/rundeck-json-plugin
+https://github.com/rundeck-plugins/rundeck-plugins-parent
+https://github.com/rundeck-plugins/rundeck-hipchat-plugin
+https://github.com/rundeck-plugins/rightscale-nodes
+https://github.com/rundeck-plugins/irc-notification
+https://github.com/rundeck-plugins/rundeck-logstash-plugin

@@ -9,3 +9,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 ##########################################################################################
+# List here all the plugins you wish to include to your project separated by new line.
+# Accepted formats:
+#  - Git SSH remote URLs
+#    e.g. git@github.com:me/my-new-plugin.git
+#  - Git HTTPS remote URLs
+#    e.g. https://github.com/me/my-new-plugin
+##########################################################################################
