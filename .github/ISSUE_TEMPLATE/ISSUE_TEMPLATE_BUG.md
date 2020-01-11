@@ -1,3 +1,7 @@
+---
+name: Bug
+about: Something else should happen
+---
 ### Expected Behaviour
 
 Describe what you expected to happen.
