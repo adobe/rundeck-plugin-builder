@@ -49,6 +49,12 @@ def clone_plugin_from_list(plugins_list:str, filename=URL_INPUT_VERBOSE_FILE, bu
     if not os.path.isfile(filename):
         print("File does not exist")
 
+    if not os.path.isdir(build_path):
+        os.mkdir(build_path)
+        print("Creating build path at {}/{}...".format(os.getcwd(), build_path))
+    else:
+        print("Build path already exists at {}/{}...".format(os.getcwd(), build_path))
+
     plugins = plugins_list.split(",")
 
     with open(filename, "r") as f:
@@ -83,7 +89,7 @@ def clone_plugin_from_file(filename:str, build_path=BUILD_PATH) -> set:
     '''
     if not os.path.isdir(build_path):
         os.mkdir(build_path)
-        print ("Build path is created at {}/{}...".format(os.getcwd(), build_path))
+        print("Creating build path at {}/{}...".format(os.getcwd(), build_path))
     else:
         print("Build path already exists at {}/{}...".format(os.getcwd(), build_path))
 
