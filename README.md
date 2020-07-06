@@ -1,50 +1,50 @@
 ### Introduction
 
 #### Rundeck - https://github.com/rundeck is a free open-source runbook automation software that brought operations to a whole new level, operations as a service. Rundeck is developed by Rundeck, Inc. and by the Rundeck community and new users are invited to contribute to the project. Extended custom functionality can be added through plugins, also available as free open-source software at https://github.com/rundeck-plugins and usually developed in top languages such as: Java, Groovy, Python, Shell, PowerShell.
-#### Nevertheless, building, adding or even writing or extending a new plugin, can be a tricky thing to do. To fully embrace this challenge, and to ease our work when customizing at scale, this project aims to provide a software skeleton for developing new plugins and an automated process for attaching the plugins to your Rundeck instance.
+#### Nevertheless, building and adding a new plugin can be a tricky thing to do. To fully embrace this challenge, and to ease our work when customizing at scale, this project aims to provide an automated process for attaching the plugins to your Rundeck instance without being necessary to build Rundeck from scratch.
 
 ![Diagram](https://user-images.githubusercontent.com/10680345/72182580-7408ec00-33f4-11ea-9c3a-e76d7f831840.jpg)
 
 ### Usage
 
-[TODO]
+The build.py script is the entry point of the plugin builder. It takes a list of plugins as a parameter, downloads them from github and installs them in Rundeck's plugin path (usually at /var/lib/rundeck/libext).
 
-##### Configuration
+It installs the plugins from the URLs found in the file specified with the --file argument. You can also filter the plugins to install from the URLs file by using the "--plugin" argument.
 
-[TODO]
-
-##### Starting with gradle
-
-[TODO]
-
-### Build & Run
-
-[TODO]
-
-### Make sure openjdk-8-jdk is installed in your building environment and that it includes java and javac.
-### To double check, run the following:
-```
-java -version
-javac -version
-```
-### Your output should look something like this:
-```
-java -version
-openjdk version "1.8.0_181"
-OpenJDK Runtime Environment (build 1.8.0_181-8u181-b13-1~deb9u1-b13)
-OpenJDK 64-Bit Server VM (build 25.181-b13, mixed mode)
-
-javac -version
-javac 1.8.0_232
-```
-### Download the source code for the plugins you wish to include. Source code for plugins is available in multiple Rundeck locations such as
+Source code for plugins is available in multiple Rundeck locations such as
  - https://docs.rundeck.com/plugins/
  - https://github.com/rundeck-plugins/
 
-### Build the jars. After building, the jars should reside in build/libs/ as <my_plugin>.jar
 ```
-./gradlew clean build
+usage: build.py [-h] [--file FILE] [--path RUNDECK_HOME] [--plugin PLUGIN]
+                [--list]
+optional arguments:
+  -h, --help           show this help message and exit
+  --file FILE          Rundeck Plugin Input File e.g. --file=config/input-
+                       verbose.txt
+  --path RUNDECK_HOME  Rundeck Plugins Path e.g. --path=/var/lib/rundeck/libext
+  --plugin PLUGIN      Rundeck Plugin Input List: e.g --plugin="vault, slack"
+  --list               List the available open-source plugins
 ```
+
+##### Configuration
+1. Make sure you have Rundeck installed.
+
+  See https://docs.rundeck.com/docs/administration/install/
+ 
+2. Make sure you have the following packages needed to run the plugin builder:
+
+```openjdk-8-jdk python3 python3-pip git gradle```
+
+3. Install python requirements:
+
+```pip3 install -r ./requirements.txt```
+
+An example of configuration is illustrated in the Dockerfile located in the root of the project.
+
+### Build & Run
+
+After the configuration is done, run the script as described in the Usage section.
 
 ### Contributing
 
