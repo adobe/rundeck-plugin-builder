@@ -22,6 +22,30 @@ import glob
 
 delimiter = '\n' + '-' * 200 + '\n'
 
+
+def clone_plugin_list(plugins_list:str, filename:str, build_path="buildplugins") -> set:
+    if not os.path.isfile(filename):
+        print("File does not exist")
+
+    plugins = plugins_list.split(",")
+    with open(filename, "r") as f:
+        for line in f:
+            for p in plugins:
+                matchExpr = r'(https://github.com/.*/.*' + p + '.*)'
+                matchURL=re.match(matchExpr, line)
+                if matchURL:
+                    print("Found {}".format(line))
+                    if os.path.isdir(os.getcwd() + "/" + build_path + "/" + str(line.strip().split("/")[-1])):
+                        print("Repository already exists. Jumping to the next...\n")
+                        continue
+                    else:
+                        print("Cloning {}...\n".format(line.strip().split("/")[-1]))
+                        git.Git(build_path).clone(line.strip())
+
+    plugins = {x for x in os.listdir(build_path) if os.path.isdir(os.path.join(build_path, x))}
+
+    return plugins
+
 def read_input(filename:str, build_path="buildplugins") -> set:
     if not os.path.isdir(build_path):
         os.mkdir(build_path)
@@ -66,30 +90,42 @@ def run_command(command, built_plugins, plugin):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", dest='input', type=str, help="Input file")
+    parser.add_argument("--file", dest='file', type=str, help="Input file")
     parser.add_argument("--path", dest='rundeck_home', type=str, help="Rundeck home path")
+    parser.add_argument("--plugin", dest='plugin', type=str, help="Rundeck plugin (minimum 5 ch)")
     args = parser.parse_args()
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
-    if not args.input or not args.rundeck_home:
+    if not args.rundeck_home:
         parser.print_help(sys.stderr)
         sys.exit(1)
     if not os.path.isdir(args.rundeck_home):
         print("Rundeck home path is invalid. Exiting...")
         sys.exit(1)
-    if args.input:
-        if not os.path.isfile(args.input):
-            print('The specified input file {} does not exist'.format(args.input))
+    if not args.file and not args.plugin:
+        print("You need to provide at least one plugin using --file or --plugin")
+        sys.exit()
+
+    built_plugins = set()
+    cloned_plugins = set()
+    if args.file:
+        if not os.path.isfile(args.file):
+            print('The specified input file {} does not exist'.format(args.file))
             sys.exit()
-        plugins = read_input(str(args.input))
-        built_plugins = set()
-        for plugin in plugins:
+            cloned_plugins_file = (read_input(str(args.file)))
+            cloned_plugins.update(cloned_plugins_file)
+            for plugin in cloned_plugins_file:
+                build_plugin(plugin, built_plugins)
+    if args.plugin:
+        cloned_plugins_list = clone_plugin_list(args.plugin, 'config/input-verbose.txt')
+        cloned_plugins.update(cloned_plugins_list)
+        for plugin in cloned_plugins_list:
             build_plugin(plugin, built_plugins)
 
     print("Successfully built: {}".format(', '.join(map(str, built_plugins))))
-    print("Build failed for: {}".format(', '.join(map(str, plugins-built_plugins))))
+    print("Build failed for: {}".format('None' if len(cloned_plugins-built_plugins)==0 else ', '.join(map(str, cloned_plugins-built_plugins))))
     print("{}Copying artifactories into {} Rundeck root directory{}".format(delimiter, args.rundeck_home, delimiter))
 
     for plugin in built_plugins:
