@@ -13,7 +13,7 @@ RUN dpkg -i $RUNDECK_DEB && rm $RUNDECK_DEB
 
 COPY ./ .
 RUN pip3 install -r ./requirements.txt
-RUN ./build.py --input=./config/example.txt --path=/var/lib/rundeck/libext/
+RUN ./build.py --file=./config/example.txt --path=/var/lib/rundeck/libext/
 
 WORKDIR ../
 RUN rm -rf $INSTALL_PATH
