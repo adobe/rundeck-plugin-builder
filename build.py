@@ -22,12 +22,33 @@ import glob
 
 delimiter = '\n' + '-' * 200 + '\n'
 
+def list_plugins_from_file(filename='./config/input-verbose.txt'):
+    '''
+        Lists the currently available Rundeck plugins as stored in input-verbose.txt
+    :param filename:str
+    '''
+    with open(filename, "r") as f:
+        for line in f:
+            matchURL = re.match(r'https://github.com/(.*)/(.*)', line)
+            if not matchURL:
+                continue
+            else:
+                print(matchURL.group(2))
+    sys.exit(1)
 
-def clone_plugin_list(plugins_list:str, filename:str, build_path="buildplugins") -> set:
+def clone_plugin_from_list(plugins_list:str, filename='./config/input-verbose.txt', build_path="buildplugins") -> set:
+    '''
+        Clones a set of Rundeck plugins based on a list of strings that match the available plugins
+    :param plugins_list:str
+    :param filename:str
+    :param build_path:str
+    :return list: list of cloned plugins
+    '''
     if not os.path.isfile(filename):
         print("File does not exist")
 
     plugins = plugins_list.split(",")
+
     with open(filename, "r") as f:
         for line in f:
             for p in plugins:
@@ -41,12 +62,23 @@ def clone_plugin_list(plugins_list:str, filename:str, build_path="buildplugins")
                     else:
                         print("Cloning {}...\n".format(line.strip().split("/")[-1]))
                         git.Git(build_path).clone(line.strip())
+    cloned_plugins = set()
+    for plugin in plugins:
+        matchStr = r'{}'.format(plugin)
+        cloned_plugins.update({x for x in os.listdir(build_path) if os.path.isdir(os.path.join(build_path, x.strip())) and re.match(matchStr, x)})
+    if len(cloned_plugins) == 0:
+        print("There's not plugin to match this name. Please try something else...")
+        sys.exit(1)
 
-    plugins = {x for x in os.listdir(build_path) if os.path.isdir(os.path.join(build_path, x))}
+    return cloned_plugins
 
-    return plugins
-
-def read_input(filename:str, build_path="buildplugins") -> set:
+def clone_plugin_from_file(filename:str, build_path="buildplugins") -> set:
+    '''
+        Clones a set of Rundeck plugins listed in an input file containing specific HTTPS git URLs
+    :param filename:str
+    :param build_path:str
+    :return list: list of cloned plugins
+    '''
     if not os.path.isdir(build_path):
         os.mkdir(build_path)
         print ("Build path is created at {}/{}...".format(os.getcwd(), build_path))
@@ -70,14 +102,26 @@ def read_input(filename:str, build_path="buildplugins") -> set:
 
     return plugins
 
-def build_plugin(plugin, built_plugins):
+def build_plugin(plugin:str, built_plugins:set):
+    '''
+       Goes into the plugins' home directory, builds the plugin and then goes back to the Rundeck home directory
+    :param plugin:str
+    :built_plugins: set
+    :return
+    '''
     rundeck_rootdir = os.getcwd()
     os.chdir(os.getcwd() + "/buildplugins/" + plugin)
     print("{}Building {}{}".format(delimiter, plugin, delimiter))
     run_command('gradle clean build', built_plugins, plugin)
     os.chdir(rundeck_rootdir)
 
-def run_command(command, built_plugins, plugin):
+def run_command(command:str, built_plugins:set, plugin:str):
+    '''
+       Runs the build command and checks if build ran successfully, in which case it adds the plugin to the set of successfully build plugins
+    :param command:str
+    :param built_plugins:set
+    :param plugin:str
+    '''
     process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
     while True:
         output = process.stdout.readline()
@@ -88,16 +132,35 @@ def run_command(command, built_plugins, plugin):
             if 'BUILD SUCCESSFUL' in output.strip().decode('utf-8'):
                 built_plugins.add(plugin)
 
+def copy_art(built_plugins:set, dest:str):
+    '''
+        Looks for the specific artifact corresponding to the plugin build and copies it into the Rundeck plugin designated path
+    :param built_plugins:set
+    :param dest:str
+    '''
+    for plugin in built_plugins:
+        artfile = ""
+        for f in glob.glob('buildplugins/' + plugin + '/build/libs/*'):
+            artfile = os.path.split(f)[-1]
+        if artfile:
+            print("Copying {} to {}...".format(artfile, dest))
+            shutil.copy2('buildplugins/' + plugin + '/build/libs/' + artfile, dest)
+
 def main():
+    '''
+        - Parses arguments and prints specific messages for each scenario
+        - Prints the set of successfully built plugins and the set of plugins for which the build has failed
+        - Copies artifacts into the Rundeck plugin designated home path
+    '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("--file", dest='file', type=str, help="Input file")
-    parser.add_argument("--path", dest='rundeck_home', type=str, help="Rundeck home path")
-    parser.add_argument("--plugin", dest='plugin', type=str, help="Rundeck plugin (minimum 5 ch)")
+    parser.add_argument("--file", dest='file', type=str, help="Rundeck Plugin Input File e.g. --file=config/input-verbose.txt")
+    parser.add_argument("--path", dest='rundeck_home', type=str, help="Rundeck Home Path e.g. --path=/var/lib/rundeck/libext")
+    parser.add_argument("--plugin", dest='plugin', type=str, help="Rundeck Plugin Input List: e.g --plugin=\"vault, slack\"")
+    parser.add_argument("--list", dest='list', action='append_const', const='list_plugins_from_file', help="List the available open-source plugins")
     args = parser.parse_args()
 
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit(1)
+    if args.list:
+        list_plugins_from_file('./config/input-verbose.txt')
     if not args.rundeck_home:
         parser.print_help(sys.stderr)
         sys.exit(1)
@@ -113,28 +176,22 @@ def main():
     if args.file:
         if not os.path.isfile(args.file):
             print('The specified input file {} does not exist'.format(args.file))
-            sys.exit()
-            cloned_plugins_file = (read_input(str(args.file)))
+            sys.exit(1)
+            cloned_plugins_file = clone_plugin_from_file(str(args.file))
             cloned_plugins.update(cloned_plugins_file)
             for plugin in cloned_plugins_file:
                 build_plugin(plugin, built_plugins)
     if args.plugin:
-        cloned_plugins_list = clone_plugin_list(args.plugin, 'config/input-verbose.txt')
+        cloned_plugins_list = clone_plugin_from_list(args.plugin)
         cloned_plugins.update(cloned_plugins_list)
         for plugin in cloned_plugins_list:
             build_plugin(plugin, built_plugins)
 
     print("Successfully built: {}".format(', '.join(map(str, built_plugins))))
     print("Build failed for: {}".format('None' if len(cloned_plugins-built_plugins)==0 else ', '.join(map(str, cloned_plugins-built_plugins))))
-    print("{}Copying artifactories into {} Rundeck root directory{}".format(delimiter, args.rundeck_home, delimiter))
+    print("{}Copying artifacts into the {} Rundeck root directory{}".format(delimiter, args.rundeck_home, delimiter))
 
-    for plugin in built_plugins:
-        jarfile = ""
-        for f in glob.glob('buildplugins/'+ plugin + '/build/libs/*'):
-            jarfile = os.path.split(f)[-1]
-        if jarfile:
-            print("Copying {} to {}...".format(jarfile, args.rundeck_home))
-            shutil.copy2('buildplugins/' + plugin + '/build/libs/' + jarfile, args.rundeck_home)
+    copy_art(built_plugins, args.rundeck_home)
 
 if __name__ == '__main__':
     main()
