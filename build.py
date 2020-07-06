@@ -20,9 +20,11 @@ import re
 import shutil
 import glob
 
-delimiter = '\n' + '-' * 200 + '\n'
+DELIM = '\n' + '-' * 200 + '\n'
+BUILD_PATH = 'buildplugins'
+URL_INPUT_VERBOSE_FILE = './config/input-verbose.txt'
 
-def list_plugins_from_file(filename='./config/input-verbose.txt'):
+def list_plugins_from_file(filename=URL_INPUT_VERBOSE_FILE):
     '''
         Lists the currently available Rundeck plugins as stored in input-verbose.txt
     :param filename:str
@@ -36,7 +38,7 @@ def list_plugins_from_file(filename='./config/input-verbose.txt'):
                 print(matchURL.group(2))
     sys.exit(1)
 
-def clone_plugin_from_list(plugins_list:str, filename='./config/input-verbose.txt', build_path="buildplugins") -> set:
+def clone_plugin_from_list(plugins_list:str, filename=URL_INPUT_VERBOSE_FILE, build_path=BUILD_PATH) -> set:
     '''
         Clones a set of Rundeck plugins based on a list of strings that match the available plugins
     :param plugins_list:str
@@ -72,7 +74,7 @@ def clone_plugin_from_list(plugins_list:str, filename='./config/input-verbose.tx
 
     return cloned_plugins
 
-def clone_plugin_from_file(filename:str, build_path="buildplugins") -> set:
+def clone_plugin_from_file(filename:str, build_path=BUILD_PATH) -> set:
     '''
         Clones a set of Rundeck plugins listed in an input file containing specific HTTPS git URLs
     :param filename:str
@@ -110,8 +112,8 @@ def build_plugin(plugin:str, built_plugins:set):
     :return
     '''
     rundeck_rootdir = os.getcwd()
-    os.chdir(os.getcwd() + "/buildplugins/" + plugin)
-    print("{}Building {}{}".format(delimiter, plugin, delimiter))
+    os.chdir(os.getcwd() + "/" + BUILD_PATH + "/" + plugin)
+    print("{}Building {}{}".format(DELIM, plugin, DELIM))
     run_command('gradle clean build', built_plugins, plugin)
     os.chdir(rundeck_rootdir)
 
@@ -140,11 +142,11 @@ def copy_art(built_plugins:set, dest:str):
     '''
     for plugin in built_plugins:
         artfile = ""
-        for f in glob.glob('buildplugins/' + plugin + '/build/libs/*'):
+        for f in glob.glob(BUILD_PATH + '/' + plugin + '/build/libs/*'):
             artfile = os.path.split(f)[-1]
         if artfile:
             print("Copying {} to {}...".format(artfile, dest))
-            shutil.copy2('buildplugins/' + plugin + '/build/libs/' + artfile, dest)
+            shutil.copy2(BUILD_PATH + '/' + plugin + '/build/libs/' + artfile, dest)
 
 def main():
     '''
@@ -160,7 +162,7 @@ def main():
     args = parser.parse_args()
 
     if args.list:
-        list_plugins_from_file('./config/input-verbose.txt')
+        list_plugins_from_file(URL_INPUT_VERBOSE_FILE)
     if not args.rundeck_home:
         parser.print_help(sys.stderr)
         sys.exit(1)
@@ -177,19 +179,19 @@ def main():
         if not os.path.isfile(args.file):
             print('The specified input file {} does not exist'.format(args.file))
             sys.exit(1)
-            cloned_plugins_file = clone_plugin_from_file(str(args.file))
-            cloned_plugins.update(cloned_plugins_file)
-            for plugin in cloned_plugins_file:
-                build_plugin(plugin, built_plugins)
+        cloned_plugins_file = clone_plugin_from_file(str(args.file))
+        cloned_plugins.update(cloned_plugins_file)
+        for plugin in cloned_plugins_file:
+            build_plugin(plugin, built_plugins)
     if args.plugin:
         cloned_plugins_list = clone_plugin_from_list(args.plugin)
         cloned_plugins.update(cloned_plugins_list)
         for plugin in cloned_plugins_list:
             build_plugin(plugin, built_plugins)
 
-    print("Successfully built: {}".format(', '.join(map(str, built_plugins))))
+    print("{}Successfully built: {}".format(DELIM, ', '.join(map(str, built_plugins))))
     print("Build failed for: {}".format('None' if len(cloned_plugins-built_plugins)==0 else ', '.join(map(str, cloned_plugins-built_plugins))))
-    print("{}Copying artifacts into the {} Rundeck root directory{}".format(delimiter, args.rundeck_home, delimiter))
+    print("{}Copying artifacts into the {} Rundeck root directory{}".format(DELIM, args.rundeck_home, DELIM))
 
     copy_art(built_plugins, args.rundeck_home)
 
